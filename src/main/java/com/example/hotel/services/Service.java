@@ -27,8 +27,7 @@ public class Service {
 
 
     public List<Room> availableRoomsByDate(LocalDate date){
-        Hotel hotel = Hotel.getInstance();
-        List<Room> allRooms = hotel.getRooms();
+        List<Room> allRooms = roomRepository.findAll();
         List<Room> availableRooms = new ArrayList<>();
         for (Room room: allRooms) {
             if(room.isAvailable(date)){

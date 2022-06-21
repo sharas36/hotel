@@ -32,6 +32,18 @@ public class Visitor {
 //    int age = birthDay.compareTo(LocalDate.now());
 
     public void addRes(Reservation res){
-        // this.reservations.add(res);
+         this.reservations.add(res);
+    }
+
+    public Boolean isVisitInDate(LocalDate date){
+        if(this.reservations.isEmpty()){
+            return false;
+        }
+        for (Reservation res: this.reservations){
+            if(date.isAfter(res.getStart()) && date.isBefore(res.getFinish())){
+                return true;
+            }
+        }
+        return false;
     }
 }

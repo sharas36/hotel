@@ -25,6 +25,23 @@ public class Service {
     @Autowired
     private VisitorRepository visitorRepository;
 
+
+    public List<Room> availableRoomsByDate(LocalDate date){
+        Hotel hotel = Hotel.getInstance();
+        List<Room> allRooms = hotel.getRooms();
+        List<Room> availableRooms = new ArrayList<>();
+        for (Room room: allRooms) {
+            if(room.isAvailable(date)){
+                availableRooms.add(room);
+            }
+        }
+        return availableRooms;
+    }
+
+
+
+
+
 //    public List<Integer> allAvailableRoomsByDate(LocalDate date) {
 //        Hotel hotel = Hotel.getInstance();
 //        List<Integer> roomNums = new ArrayList<>();

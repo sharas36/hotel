@@ -24,6 +24,7 @@ public class Reservation {
     private LocalDate start;
 
     private LocalDate finish;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<Visitor> visitors;
 

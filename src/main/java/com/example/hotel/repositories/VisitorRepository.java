@@ -1,5 +1,6 @@
 package com.example.hotel.repositories;
 
+import com.example.hotel.entities.Reservation;
 import com.example.hotel.entities.Visitor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,5 +12,9 @@ public interface VisitorRepository extends JpaRepository<Visitor, Integer> {
 
     List<Visitor> findByLastName(String lastName);
 
-    List<Visitor> findByAgeBetween(int age1, int age2);
+    List<Visitor> findByAgeBetween(int FromAge, int untilAge);
+
+
+
+
 }

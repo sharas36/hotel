@@ -15,6 +15,7 @@ import java.util.List;
 public class Hotel {
 
     private static Hotel instance = new Hotel();
+
     @Id
     private String name;
 
@@ -25,6 +26,6 @@ public class Hotel {
     }
 
     public static Hotel getInstance(){
-        return instance;
+         return instance;
     }
 }

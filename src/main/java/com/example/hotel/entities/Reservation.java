@@ -13,11 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
-@ToString(of = {"resNum", "start", "finish", "roomNum", "endDate"})
+@ToString(of = {"resNum", "startDate", "finish", "roomNum", "endDate"})
 @Builder
 public class Reservation implements Comparable<Reservation> {
-
-
 
 
     @Id
@@ -26,7 +24,7 @@ public class Reservation implements Comparable<Reservation> {
 
     private java.sql.Date startDate;
 
-    private  java.sql.Date endDate;
+    private java.sql.Date endDate;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE,})
     private List<Visitor> visitors;
@@ -43,7 +41,7 @@ public class Reservation implements Comparable<Reservation> {
     }
 
     public void addVisitor(Visitor visitor) {
-    this.visitors.add(visitor);
+        this.visitors.add(visitor);
     }
 
 }

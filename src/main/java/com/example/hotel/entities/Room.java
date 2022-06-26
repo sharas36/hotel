@@ -14,7 +14,7 @@ import java.util.Random;
 @Data
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@ToString(of = {"roomNum", "floorNum"})
+@ToString(exclude = "reservationList")
 @Builder
 
 
@@ -28,7 +28,12 @@ public class Room {
 
     private int roomNum;
 
-    @OneToMany(mappedBy = "roomNum", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            mappedBy = "roomNum",
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
+    )
     private List<Reservation> reservationList;
 
 

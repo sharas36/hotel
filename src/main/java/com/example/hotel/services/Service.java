@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 @org.springframework.stereotype.Service
 public class Service {
 
+
+
     @Autowired
     private ReservationRepository reservationRepository;
 
@@ -130,12 +132,16 @@ public class Service {
         return visitorRepository.findByFirstName(lastName);
     }
 
-    public List<Visitor> getVisitorByAge(int FromAge, int untilAge) {
+    public List<Visitor> getVisitorByAges(int FromAge, int untilAge) {
         return visitorRepository.findByAgeBetween(FromAge, untilAge);
     }
 
-    public List<Reservation> stamToCheck(Date date1, Date date2) {
-        return reservationRepository.findByEndDateGreaterThanEqualAndStartDateLessThanEqual(date1, date2);
+    public void deleteRoom(Room room) {
+        roomRepository.deleteById(room.getRoomId());
+    }
+
+    public Room getRoom(int id) {
+        return roomRepository.getReferenceById(id);
     }
 
 

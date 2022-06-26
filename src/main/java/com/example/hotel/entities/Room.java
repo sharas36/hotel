@@ -32,8 +32,7 @@ public class Room {
             cascade = CascadeType.ALL,
             mappedBy = "roomNum",
             fetch = FetchType.LAZY,
-            orphanRemoval = true,
-            optional = true
+            orphanRemoval = true
     )
     private List<Reservation> reservationList;
 
@@ -47,6 +46,8 @@ public class Room {
     public void addReservation(Reservation reservation) {
         this.reservationList.add(reservation);
     }
+
+    // sta, somrthing
 
 
 }

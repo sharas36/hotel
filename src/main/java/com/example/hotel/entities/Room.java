@@ -40,7 +40,7 @@ public class Room {
 
     public Room() {
         this.floorNum = new Random().nextInt(10);
-        this.roomNum = floorNum * 100 + (new Random().nextInt(94) + 1);
+        this.roomNum = floorNum * 101 + (new Random().nextInt(54) + 1);
         this.reservationList = new ArrayList<>();
     }
 

@@ -32,14 +32,15 @@ public class Room {
             cascade = CascadeType.ALL,
             mappedBy = "roomNum",
             fetch = FetchType.LAZY,
-            orphanRemoval = true
+            orphanRemoval = true,
+            optional = true
     )
     private List<Reservation> reservationList;
 
 
     public Room() {
         this.floorNum = new Random().nextInt(10);
-        this.roomNum = floorNum * 100 + (new Random().nextInt(98) + 1);
+        this.roomNum = floorNum * 100 + (new Random().nextInt(97) + 1);
         this.reservationList = new ArrayList<>();
     }
 

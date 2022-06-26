@@ -9,12 +9,17 @@ import com.example.hotel.repositories.RoomRepository;
 import com.example.hotel.repositories.VisitorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.imageio.spi.RegisterableService;
+import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Period;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
 public class Service {
+
+
 
     @Autowired
     private ReservationRepository reservationRepository;
@@ -26,83 +31,119 @@ public class Service {
     private VisitorRepository visitorRepository;
 
 
-    public List<Room> availableRoomsByDate(LocalDate date){
-        List<Room> allRooms = roomRepository.findAll();
-        List<Room> availableRooms = new ArrayList<>();
-        for (Room room: allRooms) {
-            if(room.isAvailable(date)){
-                availableRooms.add(room);
-            }
-        }
-        return availableRooms;
-    }
+    public synchronized Boolean availableByDate(Reservation reservation) {
 
+        Date startDate = reservation.getStartDate();
 
+        List<Reservation> availableDate = reservationRepository.findByEndDateGreaterThanEqual(startDate);
 
+        availableDate = availableDate.stream().sorted().collect(Collectors.toList());
 
+        if (availableDate.isEmpty()) {
+            Room room = new Room();
+            room.setRoomId(new Random().nextInt(25) + 1);
+            System.out.println("your reservation been saved");
+            reservation.setRoomNum(room);
+            saveReservation(reservation);
+            return true;
 
-//    public List<Integer> allAvailableRoomsByDate(LocalDate date) {
-//        Hotel hotel = Hotel.getInstance();
-//        List<Integer> roomNums = new ArrayList<>();
-//        for (Room room : hotel.getRooms()) {
-//            if (room.isAvailable()) {
-//                roomNums.add(room.getRoomNum());
-//            }
-//        }
-//        return roomNums;
-//    }
-
-    public Boolean isThisRoomAvailableNow(int roomId) {
-        Room room = (Room) roomRepository.findById(roomId);
-        if (room.isAvailable(LocalDate.now())) {
+        } else if (availableDate.get(0).getStartDate().getTime() <= reservation.getEndDate().getTime()) {
+            System.out.println("this date not available for this room please try another date");
+            return false;
+        } else {
+            reservation.setRoomNum(availableDate.get(0).getRoomNum());
+            saveReservation(reservation);
+            System.out.println("your reservation benn sussed your room number is " + reservation.getRoomNum().getRoomNum());
             return true;
         }
-        return false;
+
     }
 
-//    public int howMuchNotAvalableByDate(LocalDate date1, LocalDate date2) {
-//        return reservationRepository.findByStartBeforeAndEndAfter(date1, date2).size();
-//    }
+    public synchronized boolean isRoomAvailable(Room room, Reservation reservation) {
 
-//    public List<Room> AvalableTomorrowAndNotToday() {
-//
-//        List<Reservation> resTomorrow = reservationRepository.findByStartBeforeAndEndAfter(LocalDate.now().plusDays(1));
-//        List<Reservation> resToday = reservationRepository.findByStartBeforeAndEndAfter(LocalDate.now());
-//        resToday.removeAll(resTomorrow);
-//        List<Room> rooms = new ArrayList<>();
-//        for (Reservation res : resTomorrow) {
-//            rooms.add(res.getRoomNum());
-//        }
-//
-//        return rooms;
-//    }
+        Date startDate = reservation.getStartDate();
+        Date endDate = reservation.getEndDate();
 
-    public Room findAvailableRoom(LocalDate start, LocalDate end) {
-        Hotel hotel = Hotel.getInstance();
-        List<Room> allRooms = hotel.getRooms();
-        for (Room room : allRooms) {
-            List<Reservation> roomRes = new ArrayList<>();
-            for (Reservation res : room.getReservationList()) {
-                if (res.getStart().isAfter(end)) {
-                    return room;
-                }
-                if (res.getFinish().isBefore(start)) {
-                    return room;
-                }
-            }
+        List<Reservation> availableDate = room.getReservationList();
+
+        availableDate = availableDate.stream()
+                .filter(r -> r.getEndDate().getTime() >= startDate.getTime()).collect(Collectors.toList());
+
+
+        if (availableDate.isEmpty()) {
+            System.out.println("your reservation been saved");
+            saveReservation(reservation);
+            return true;
+        } else if (!availableDate.isEmpty() && availableDate.get(0).getStartDate().getTime() <= endDate.getTime()) {
+            System.out.println("this date not available for this room please try another date");
+            return false;
+        } else {
+            reservation.setRoomNum(availableDate.get(0).getRoomNum());
+            saveReservation(reservation);
+            return true;
         }
-        return null;
-    }
 
-    public void addRes(Reservation reservation) {
-        reservationRepository.save(reservation);
     }
 
     public void saveRoom(Room room) {
         roomRepository.save(room);
+
     }
 
-    public Reservation getReservation(int num) {
-        return reservationRepository.findById(num).get();
+    public void saveReservation(Reservation reservation) {
+        reservationRepository.save(reservation);
     }
+
+    public Optional<Reservation> getReservation(int num) {
+        return reservationRepository.findById(num);
+
+    }
+
+    public void saveVisitor(Visitor visitor) {
+        visitorRepository.save(visitor);
+    }
+
+    public void addVisitorToReservation(int reservationId, int visitorId) {
+
+        Visitor visitor = visitorRepository.getReferenceById(visitorId);
+
+        Reservation reservation = reservationRepository.getReferenceById(reservationId);
+
+        if (!visitorRepository.findById(visitorId).isPresent() ||
+                !reservationRepository.findById(reservationId).isPresent()) {
+            System.out.println("reservation is or visitor are not exist");
+        } else {
+            reservation.addVisitor(visitor);
+            reservationRepository.save(reservation);
+        }
+
+
+    }
+
+    public List<Reservation> getReservationBetweenTwoDate(Date date1, Date date2) {
+        return reservationRepository.findByStartDateAfterAndEndDateBefore(date1, date2);
+    }
+
+    public List<Visitor> getByFirstName(String firstName) {
+        return visitorRepository.findByFirstName(firstName);
+    }
+
+    public List<Visitor> getByLastName(String lastName) {
+        return visitorRepository.findByFirstName(lastName);
+    }
+
+    public List<Visitor> getVisitorByAges(int FromAge, int untilAge) {
+        return visitorRepository.findByAgeBetween(FromAge, untilAge);
+    }
+
+    public void deleteRoom(Room room) {
+        roomRepository.deleteById(room.getRoomId());
+    }
+
+    public Room getRoom(int id) {
+        return roomRepository.getReferenceById(id);
+    }
+
+
 }
+

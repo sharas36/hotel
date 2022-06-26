@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-@EqualsAndHashCode(of="id")
+@EqualsAndHashCode(of = "id")
 @Builder
 public class Visitor {
 
@@ -24,26 +24,16 @@ public class Visitor {
 
     private String lastName;
 
-//    private LocalDate birthDay;
+    private int age;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+
+
+    @ManyToMany(mappedBy = "visitors", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<Reservation> reservations = new ArrayList<>();
 
 //    int age = birthDay.compareTo(LocalDate.now());
 
     public void addRes(Reservation res){
-         this.reservations.add(res);
-    }
-
-    public Boolean isVisitInDate(LocalDate date){
-        if(this.reservations.isEmpty()){
-            return false;
-        }
-        for (Reservation res: this.reservations){
-            if(date.isAfter(res.getStart()) && date.isBefore(res.getFinish())){
-                return true;
-            }
-        }
-        return false;
+        // this.reservations.add(res);
     }
 }

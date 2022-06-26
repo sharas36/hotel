@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -12,35 +13,42 @@ import java.util.Random;
 @Table(name = "rooms")
 @Data
 @AllArgsConstructor
-@EqualsAndHashCode(of="id")
-@ToString(of = {"roomNum", "floorNum"})
+@EqualsAndHashCode(of = "id")
+@ToString(exclude = "reservationList")
 @Builder
+
+
 public class Room {
 
     @Id
-    private int roomNum;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int roomId;
 
     private int floorNum;
 
-    @OneToMany(mappedBy = "roomNum", fetch = FetchType.EAGER)
+    private int roomNum;
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            mappedBy = "roomNum",
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
+    )
     private List<Reservation> reservationList;
 
 
-    public Room(){
+    public Room() {
         this.floorNum = new Random().nextInt(10);
-        this.roomNum = floorNum * 100 + (new Random().nextInt(99) + 1);
+        this.roomNum = floorNum * 101 + (new Random().nextInt(54) + 1);
         this.reservationList = new ArrayList<>();
     }
 
-    public Boolean isAvailable(LocalDate date){
-        if(this.reservationList.isEmpty()){
-            return true;
-        }
-        for (Reservation res: reservationList) {
-            if(date.isAfter(res.getStart()) && date.isBefore(res.getFinish())){
-                return false;
-            }
-        }
-        return true;
+    public void addReservation(Reservation reservation) {
+        this.reservationList.add(reservation);
     }
+
+    // sta, somrthing
+
+
 }
+

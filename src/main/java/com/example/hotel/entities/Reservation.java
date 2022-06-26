@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -12,25 +13,35 @@ import java.util.List;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
-@ToString(of = {"resNum", "start", "finish", "roomNum"})
+@ToString(of = {"resNum", "startDate", "finish", "roomNum", "endDate"})
 @Builder
-public class Reservation {
+public class Reservation implements Comparable<Reservation> {
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int resNum;
 
-    private LocalDate start;
+    private java.sql.Date startDate;
 
-    private LocalDate finish;
+    private java.sql.Date endDate;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE,})
     private List<Visitor> visitors;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinColumn(name = "room_num")
     private Room roomNum;
 
+
+    @Override
+    public int compareTo(Reservation o) {
+        return this.getEndDate().getTime() > o.getEndDate().getTime() ? 1 :
+                this.getEndDate().getTime() < o.getEndDate().getTime() ? -1 : 0;
+    }
+
+    public void addVisitor(Visitor visitor) {
+        this.visitors.add(visitor);
+    }
 
 }

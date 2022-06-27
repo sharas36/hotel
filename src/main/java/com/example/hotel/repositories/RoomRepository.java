@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface RoomRepository extends JpaRepository<Room, Integer> {
 
-
+    public Room findById(int roomId);
 
 
 }

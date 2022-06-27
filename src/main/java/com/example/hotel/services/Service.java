@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 public class Service {
 
 
-
     @Autowired
     private ReservationRepository reservationRepository;
 
@@ -31,58 +30,43 @@ public class Service {
     private VisitorRepository visitorRepository;
 
 
-    public synchronized Boolean availableByDate(Reservation reservation) {
+    public synchronized Room availableByDate(Reservation reservation) {
 
-        Date startDate = reservation.getStartDate();
+        List<Room> rooms = roomRepository.findAll();
+        for (Room room : rooms) {
+            Date startDate = reservation.getStartDate();
+            Date endDate = reservation.getEndDate();
 
-        List<Reservation> availableDate = reservationRepository.findByEndDateGreaterThanEqual(startDate);
+            List<Reservation> availableDate = room.getReservationList();
 
-        availableDate = availableDate.stream().sorted().collect(Collectors.toList());
+            availableDate = availableDate.stream()
+                    .filter(r -> r.getEndDate().getTime() >= startDate.getTime()).sorted().collect(Collectors.toList());
 
-        if (availableDate.isEmpty()) {
-            Room room = new Room();
-            room.setRoomId(new Random().nextInt(25) + 1);
-            System.out.println("your reservation been saved");
-            reservation.setRoomNum(room);
-            saveReservation(reservation);
-            return true;
+            if (availableDate.isEmpty()) {
+                reservation.setRoomNum(room);
+                saveRoom(room);
+                return room;
+            }
+            for (Reservation res : availableDate) {
+                if (res.getStartDate().getTime() > endDate.getTime()) {
+                    reservation.setRoomNum(room);
+                    saveRoom(room);
+                    return room;
+                }
+            }
 
-        } else if (availableDate.get(0).getStartDate().getTime() <= reservation.getEndDate().getTime()) {
-            System.out.println("this date not available for this room please try another date");
-            return false;
-        } else {
-            reservation.setRoomNum(availableDate.get(0).getRoomNum());
-            saveReservation(reservation);
-            System.out.println("your reservation benn sussed your room number is " + reservation.getRoomNum().getRoomNum());
-            return true;
         }
-
+        return null;
     }
 
-    public synchronized boolean isRoomAvailable(Room room, Reservation reservation) {
-
-        Date startDate = reservation.getStartDate();
-        Date endDate = reservation.getEndDate();
-
-        List<Reservation> availableDate = room.getReservationList();
-
-        availableDate = availableDate.stream()
-                .filter(r -> r.getEndDate().getTime() >= startDate.getTime()).collect(Collectors.toList());
-
-
-        if (availableDate.isEmpty()) {
-            System.out.println("your reservation been saved");
+    public Reservation addReservation(Reservation reservation) {
+        Room room = availableByDate(reservation);
+        if(room != null) {
+            reservation.setRoomNum(room);
             saveReservation(reservation);
-            return true;
-        } else if (!availableDate.isEmpty() && availableDate.get(0).getStartDate().getTime() <= endDate.getTime()) {
-            System.out.println("this date not available for this room please try another date");
-            return false;
-        } else {
-            reservation.setRoomNum(availableDate.get(0).getRoomNum());
-            saveReservation(reservation);
-            return true;
+            return reservation;
         }
-
+        return null;
     }
 
     public void saveRoom(Room room) {
@@ -144,6 +128,12 @@ public class Service {
         return roomRepository.getReferenceById(id);
     }
 
+    public List<Reservation> getAllReservations() {
+        return reservationRepository.findAll();
+    }
 
+    public List<Reservation> getAllReservationsOfRoom(int roomId) {
+        return roomRepository.findById(roomId).getReservationList();
+    }
 }
 

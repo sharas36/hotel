@@ -19,38 +19,44 @@ public class ReservationController {
     @Autowired
     private Service service = new Service();
 
-    @GetMapping("all")
+    @GetMapping("/all")
     @ResponseBody
-    public ResponseEntity<List<Reservation>> getAllReservations() {
-        List<Reservation> res = service.getAllReservations();
+    public ResponseEntity<?> getAllReservations()  throws Exception{
 
+        List<Reservation> res = service.getAllReservations();
+        System.out.println("cdcsc");
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @GetMapping("allByRoom")
+    @GetMapping("/hey") // http://localhost:8080/api/hey
     @ResponseBody
-    public ResponseEntity<?> getAllReservationsByRoom(@PathVariable int roomId){
+    public String greet(){
+        return "Hello from backend!";
+    }
+
+    @GetMapping("/allByRoom")
+    @ResponseBody
+    public ResponseEntity<?> getAllReservationsByRoom(@PathVariable int roomId) {
         try {
             List<Reservation> res = service.getAllReservationsOfRoom(roomId);
             return new ResponseEntity<>(res, HttpStatus.OK);
-        }
-        catch (Exception e){
-            return new ResponseEntity<String>("Bad request, no room found for id="+roomId, HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<String>("Bad request, no room found for id=" + roomId, HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping("betweenDates")
+    @GetMapping("/betweenDates")
     @ResponseBody
-    public ResponseEntity<?> getAllReservationsBetweenDates(@PathVariable java.sql.Date date1, Date date2){
-            List<Reservation> res = service.getReservationBetweenTwoDate(date1, date2);
-            return new ResponseEntity<>(res, HttpStatus.OK);
+    public ResponseEntity<?> getAllReservationsBetweenDates(@PathVariable java.sql.Date date1, Date date2) {
+        List<Reservation> res = service.getReservationBetweenTwoDate(date1, date2);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @GetMapping("addRes")
+    @GetMapping("/addRes")
     @ResponseBody
-    public ResponseEntity<?> addReservation(@RequestBody Reservation reservation){
+    public ResponseEntity<?> addReservation(@RequestBody Reservation reservation) {
         Reservation res = service.addReservation(reservation);
-        if(res != null){
+        if (res != null) {
             return new ResponseEntity<>(res, HttpStatus.OK);
         }
         return new ResponseEntity<>("No available room in this dates", HttpStatus.BAD_REQUEST);

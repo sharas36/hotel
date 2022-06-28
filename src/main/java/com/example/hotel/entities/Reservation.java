@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
-@ToString(of = {"resNum", "startDate", "finish", "roomNum", "endDate"})
+@ToString(of = {"resNum", "startDate", "finish", "endDate"})
 @Builder
 public class Reservation implements Comparable<Reservation> {
 

@@ -24,7 +24,8 @@ public class HotelApplication {
 
         Service service = ctx.getBean(Service.class);
 
-        service.getRoom(23).getReservationList().forEach(System.out::println);
+
+
 
     }
 

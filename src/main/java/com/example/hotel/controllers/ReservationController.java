@@ -28,11 +28,7 @@ public class ReservationController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @GetMapping("/hey") // http://localhost:8080/api/hey
-    @ResponseBody
-    public String greet(){
-        return "Hello from backend!";
-    }
+
 
     @GetMapping("/allByRoom")
     @ResponseBody
@@ -61,4 +57,5 @@ public class ReservationController {
         }
         return new ResponseEntity<>("No available room in this dates", HttpStatus.BAD_REQUEST);
     }
+
 }

@@ -69,8 +69,8 @@ public class Service {
         return null;
     }
 
-    public void saveRoom(Room room) {
-        roomRepository.save(room);
+    public Room saveRoom(Room room) {
+       return roomRepository.save(room);
 
     }
 
@@ -134,6 +134,10 @@ public class Service {
 
     public List<Reservation> getAllReservationsOfRoom(int roomId) {
         return roomRepository.findById(roomId).getReservationList();
+    }
+
+    public List<Room> getAllRooms(){
+       return roomRepository.findAll();
     }
 }
 

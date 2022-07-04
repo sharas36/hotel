@@ -1,5 +1,7 @@
 package com.example.hotel.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,7 +19,6 @@ import java.util.Random;
 @ToString(exclude = "reservationList")
 @Builder
 
-
 public class Room {
 
     @Id
@@ -34,6 +35,8 @@ public class Room {
             fetch = FetchType.LAZY,
             orphanRemoval = true
     )
+
+    @JsonIgnoreProperties("roomNum")
     private List<Reservation> reservationList;
 
 

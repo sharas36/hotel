@@ -12,6 +12,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -23,10 +27,6 @@ public class HotelApplication {
         ConfigurableApplicationContext ctx = SpringApplication.run(HotelApplication.class, args);
 
         Service service = ctx.getBean(Service.class);
-
-
-
-
     }
 
 

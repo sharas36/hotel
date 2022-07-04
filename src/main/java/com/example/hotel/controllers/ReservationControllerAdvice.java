@@ -1,3 +1,4 @@
+
 package com.example.hotel.controllers;
 
 import org.springframework.http.HttpStatus;

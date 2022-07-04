@@ -1,5 +1,6 @@
 package com.example.hotel.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -31,6 +32,7 @@ public class Reservation implements Comparable<Reservation> {
 
     @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinColumn(name = "room_num")
+    @JsonIgnoreProperties("reservationList")
     private Room roomNum;
 
 
